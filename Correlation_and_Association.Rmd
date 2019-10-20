@@ -1,0 +1,211 @@
+---
+title: |
+ |  On correlation and association  
+ | PÍNDOLES ESTADÍSTIQUES UEB-VHIR
+author: "Alex Sánchez"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: ["mycss.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true 
+      countIncrementalSlides: false
+params:
+  name1: "Alex" 
+  name2: "Alex"
+editor_options: 
+  chunk_output_type: console
+---
+
+<!-- edit name1 and name2 in the YAML above -->
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r echo=FALSE, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/uebvhir.png")
+```
+
+
+---
+
+# Outline of the talk
+
+- Why this pill (some examples)
+- Some basic ideas we have all heard about
+- What about significance (p-values)
+- Correlation false-friends
+    + _Regression, Relation, Agreement, Spurious, Ecological phallacy, Causation_
+- Moving forward 
+    + More dimensions, More methods ...
+- Wrap-up
+
+---
+
+# Motivation (_Why this pill_)
+
+- Everybody uses the term correlation, in science and normal life.
+
+
+```{r echo=FALSE, out.width="90%", fig.align='center'}
+knitr::include_graphics("images/correlationTitles.png")
+```
+
+# But what is correlation?
+
+- In statistics, __dependence__ or __association__ is _any statistical relationship, whether causal or not, between two (random) variables_. 
+- In the broadest sense __correlation__ is _any statistical association_, though 
+- it commonly refers to _the degree to which a pair of variables are linearly related_ (Pearson correlation coefficient).
+
+---
+
+# Association can take many forms
+
+```{r echo=FALSE, out.width="90%", fig.align='center'}
+knitr::include_graphics("images/Correlation_examples1.WKP.png")
+```
+
+---
+
+# Example: Body fat and biometric measures
+
+```{r, echo=FALSE, message=FALSE}
+library(XML)
+url <- "http://wiki.stat.ucla.edu/socr/index.php/SOCR_Data_BMI_Regression"
+BMI_parsed <- htmlParse(url)
+BMI_table <- readHTMLTable(BMI_parsed, which = 2) 
+for (i in 1:ncol(BMI_table)) BMI_table[,i] <- as.numeric(BMI_table[,i])
+BMI_table2 <- BMI_table[BMI_table$BodyFatSiriEqu < 100,]
+BMI_table3<- BMI_table2[1:30,c(2:4,11:15)]
+```
+
+```{r, echo=FALSE, fig.align='center'}
+require(GGally)
+ggpairs(BMI_table3)
+```
+
+---
+
+
+# Reviewing correlation coefficients (what's in my toolbox?)
+
+- Pearson (linear) correlation coefficient
+- Sperman (ranks) correlation coefficient
+- Kendall's tau
+- Intraclass correlation coefficients
+- Many other: Distance correlation, M
+
+---
+
+# Pearson correlation coefficient
+
+- Most commonly used correlation coefficient
+- Measures the degree of __linear__ relation between a pair of variables.
+- It takes values between +1 and −1, where 1 is total positive linear correlation, 0 is no linear correlation, and −1 is total negative linear correlation. 
+
+```{r echo=FALSE, out.width="80%", fig.align='center'}
+knitr::include_graphics("images/PearsonCCValues.png")
+```
+
+---
+
+# Pearson CC measures linear association
+
+```{r echo=FALSE, out.width="90%", fig.align='center'}
+knitr::include_graphics("images/Correlation_examples2.WKP.png")
+```
+---
+# Spearman correlation
+
+- Pearson CC is not useful if the relation is not linear
+- If, not being linear, it is _monotonically increasing_ or _montonically decreasing_, we may use Spearman Ranks Correlation. Coefficient.
+
+
+```{r, echo=FALSE}
+age<-c(23,33,27,28,29,39,41,45,30,50,53,36,54,56,57,58,59,60,61)
+percFat <- c(9.5,27.9,17.8,18.7,23,31.4,25.9,34,25.2,31.1,34.7,32.0,29.1,32.5,30.3,33.0,33.8,31.5,34.5)
+bodyFat<- data.frame(age,percFat)
+bodyFat <- bodyFat[order(bodyFat$age),]
+reg<-lm(percFat ~ age, data = bodyFat)
+coeff=coefficients(reg)
+```
+
+.pull-left[
+```{r, echo=FALSE}
+knitr::kable(bodyFat, format="markdown")
+```
+]
+.pull-right[
+
+```{r, echo=FALSE}
+sp<- ggplot(bodyFat, aes(x=age, y=percFat)) + geom_point()
+sp
+```
+
+Based on - Maze et al (1984) who studied the relation between age and percentage of Body fat
+]
+
+
+---
+
+# Relation is monotonic, but not linear
+
+```{r, echo=FALSE, fig.align='center'}
+sp + geom_abline(intercept = coeff[1], slope=coeff[2]) + stat_smooth()
+```
+
+---
+
+# Spearman CC is based on __ranks__
+
+- Spearman CC = Pearson CC computed on ranks
+
+.pull-left[
+```{r, echo=FALSE}
+rankAge= rank(age)
+rankFat=rank(percFat)
+bodyFatWithRanks <- data.frame(age, rankAge, percFat, rankFat )
+bodyFatWithRanks<- bodyFatWithRanks[order(bodyFatWithRanks$age),]
+kableExtra::kable(bodyFatWithRanks)
+```
+]
+.pull-right[
+```{r}
+cor(age,bodyFat, 
+    method = "spearman")[2]
+cor(rankAge, rankFat,
+    method = "pearson")
+```
+]
+
+---
+
+# So what? Pearson or Spearmann?
+
+- Start with a plot
+- If the relation ship is _approximately_ linear you can use Pearson CC.
+- If the relation is not linear but it is _monotonically increasing- or _monotonically decreasing_ you better use Spearmann CC.
+
+- The measurement scale is also a criteria 
+
+    - Use Pearson if the data is in an "interval" or "quotient" scale
+    - Use Spearmann if the data are on an "ordinal" scale
+
+---
+
+# Kendall's TAU
+
+- Also suitable for data on an ordinal scale
+- Simple interpretation: It represents the degree of concordance between two columns of ranked data.
+    +  The more concordant ranks, the higher correlation.
+    + The more inversions (one rank increases, the other decreases) the lower correlation.
+
+
+
+
+
