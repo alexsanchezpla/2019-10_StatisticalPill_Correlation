@@ -16,7 +16,7 @@ body {
 
 .remark-slide-content {
   background-color: #FFFFFF;
-  border-top: 80px solid #336b87; /*#23373B*/
+  border-top: 80px solid #942E80;
   font-size: 20px;
   font-weight: 300;
   line-height: 1.5;
@@ -76,9 +76,9 @@ position: absolute;
 .title-slide {
   background-color: #FFFFFF;
   border-top: 80px solid #FFFFFF;
-  background-image: url("pix/POMA_sticker.png");
-  background-position: 90% 1%; 
-  background-size: 20%;
+  background-image: url("images/pindolaTitleSlide.png");
+  background-position: 100% 100%; 
+  background-size: 100%;
 }
 
 .title-slide > h1  {

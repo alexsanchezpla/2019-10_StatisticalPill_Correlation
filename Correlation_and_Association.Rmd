@@ -1,9 +1,7 @@
 ---
-title: |
- |  On correlation and association  
- | PÍNDOLES ESTADÍSTIQUES UEB-VHIR
-author: "Alex Sánchez"
-date: "`r Sys.Date()`"
+title: "."
+author: "."
+# date: "`r Sys.Date()`"
 output: 
   xaringan::moon_reader:
     css: ["mycss.css"]
@@ -26,13 +24,6 @@ editor_options:
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
-
-
-```{r echo=FALSE, out.width="100%", fig.align='center'}
-knitr::include_graphics("images/pindolaTitleSlide.png")
-```
-
----
 
 # Statistics and Bioinformatics Unit (UEB)
 
@@ -65,11 +56,11 @@ knitr::include_graphics("images/uebvhir.png")
 - Everybody uses the term correlation, in science and normal life.
 
 
-```{r echo=FALSE, out.width="90%", fig.align='center'}
+```{r echo=FALSE, out.width="50%", fig.align='center'}
 knitr::include_graphics("images/correlationTitles.png")
 ```
 
-# But what is correlation?
+## But what is correlation?
 
 - In statistics, __dependence__ or __association__ is _any statistical relationship, whether causal or not, between two (random) variables_. 
 - In the broadest sense __correlation__ is _any statistical association_, though 
@@ -104,7 +95,9 @@ ggpairs(BMI_table3)
 
 ---
 
-# Reviewing correlation coefficients (what's in my toolbox?)
+# Reviewing correlation coefficients 
+
+## What's in my toolbox?
 
 - Pearson (linear) correlation coefficient
 - Sperman (ranks) correlation coefficient
@@ -350,7 +343,7 @@ corrplot(res$r, type="upper",
 - In summary: _Too much effort for a very small prize?_
 
 
-# Confidence intervals for $\rho$
+## Confidence intervals for $\rho$
 
 - A better alternative: __Compute confidence intervals for the correlation coefficient__.
     - Again validity of assumptions is an additional difficulty
@@ -476,4 +469,11 @@ knitr::include_graphics("images/correlationNOTcausation1.png")
 ---
 
 # Conclusions and recap
+
+```{r, warning = FALSE, comment = NA, message = FALSE, echo = FALSE, eval = FALSE}
+# HTML to PDF
+library(webshot)
+file_name <- paste0("file://", normalizePath("Correlation_and_Association.html"))
+webshot(file_name, "Correlation_and_Association.pdf")
+```
 
