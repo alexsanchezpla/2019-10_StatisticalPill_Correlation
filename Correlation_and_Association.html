@@ -50,9 +50,31 @@ class: center, middle, inverse, title-slide
 - Everybody uses the term correlation, in science and normal life.
 
 
-&lt;img src="images/correlationTitles.png" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;img src="images/correlationTitles.png" width="80%" style="display: block; margin: auto;" /&gt;
 
-## But what is correlation?
+---
+
+# Motivation (_Why this pill_)
+
+.pull-left[
+
+- The concept, however is often misused or abused.
+    - Correlation used instead of agreement
+    - Regression used when there is no dependent/independent variables
+    - Significance applied when assumptions do not hold.
+]
+
+.pull-right[
+&lt;img src="images/motivation2.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.center[
+ __It may be worth to review a few concepts!__
+]
+
+---
+
+# But what is correlation?
 
 - In statistics, __dependence__ or __association__ is _any statistical relationship, whether causal or not, between two (random) variables_. 
 - In the broadest sense __correlation__ is _any statistical association_, though 
@@ -70,7 +92,7 @@ class: center, middle, inverse, title-slide
 
 
 
-&lt;img src="Correlation_and_Association_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="Correlation_and_Association_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -138,7 +160,7 @@ class: center, middle, inverse, title-slide
 
 .pull-right[
 
-![](Correlation_and_Association_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+![](Correlation_and_Association_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
 Based on - Maze et al (1984).
 ]
 
@@ -147,7 +169,7 @@ Based on - Maze et al (1984).
 
 # Relation is monotonic, but not linear
 
-&lt;img src="Correlation_and_Association_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="Correlation_and_Association_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -327,16 +349,16 @@ cor(rankAge, rankFat,
 
 ---
 
-# So what? Pearson or Spearmann?
+# So what? Pearson or Spearman?
 
 - Start with a plot
 - If the relation ship is _approximately_ linear you can use Pearson CC.
-- If the relation is not linear but it is _monotonically increasing- or _monotonically decreasing_ you better use Spearmann CC.
+- If the relation is not linear but it is _monotonically increasing- or _monotonically decreasing_ you better use Spearman CC.
 
 - The measurement scale is also a criteria 
 
     - Use Pearson if the data is in an "interval" or "quotient" scale
-    - Use Spearmann if the data are on an "ordinal" scale
+    - Use Spearman if the data are on an "ordinal" scale
 
 ---
 
@@ -346,27 +368,8 @@ cor(rankAge, rankFat,
 
 ---
 
-# Kendall's TAU
 
-- Also suitable for data on an ordinal scale
-- Simple interpretation: It represents the degree of concordance between two columns of ranked data.
-    +  The more concordant ranks, the higher correlation.
-    + The more inversions (one rank increases, the other decreases) the lower correlation.
-
-.center[
-
-```r
-cor(rankAge, rankFat, method = "kendall")
-```
-
-```
-## [1] 0.6374269
-```
-]
-
----
-
-# SIgnificance of correlation
+# Significance of correlation
 
 &lt;br&gt;
 
@@ -608,22 +611,100 @@ $$
 ---
 # FF (4): Correlation is not agreement
 
----
+- Correlation and agreement are similar and related concepts but, _although similar and related, __they represent completely different notions of association__. 
 
-# FF (4): Spureous correlation
-
----
-
-# Going multivariate: Multiple correlation
+- Assessing agreement between variables assumes that the variables measure the same construct, 
+- while correlation of variables can be assessed for variables that measure completely different constructs. 
 
 ---
 
-# Going multivariate: Partial correlations
+# FF (4): Correlation is not agreement
+
+.pull-left[
+- _Aorta pulsatility_ is measured in week 0 and week 12 in the same body location in stable patients.
+
+- Both variables are measuring the same (AP) therefore the correlation does not make sense.
+
+- Instead we compute a _concordance coefficient_ (intraclass correlation) which accounts for the repeted measurement effect.
+]
+
+.pull-right[
+&lt;img src="images/agreement1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+---
+
+# FF (4): Correlation is not agreement
+
+&lt;img src="images/agreement2.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# FF (4): Correlation is not agreement 
+
+&lt;img src="images/agreement3.png" width="90%" style="display: block; margin: auto;" /&gt;
+---
+
+# Going multivariate
+
+- What about correlation when we deal with several variables simultaneously?
+- Obvious step 1: Multiple correlations: every variable vs every other variable.
+
+&lt;br&gt;
+
+
+```
+##         BdyFt Age   Heght KneCr AnklC ExtnB Forrm WrstC
+## BodyFat  1.00                                          
+## Age      0.32  1.00                                    
+## Height  -0.27 -0.23  1.00                              
+## KneeCir  0.35 -0.09  0.48  1.00                        
+## AnkleCi -0.13 -0.26  0.65  0.62  1.00                  
+## ExtendB  0.53 -0.02  0.23  0.78  0.45  1.00            
+## Forearm  0.38 -0.16  0.31  0.73  0.55  0.82  1.00      
+## WristCi  0.20 -0.05  0.46  0.71  0.67  0.66  0.89  1.00
+```
+
+---
+# Partial correlations
+
+- A good idea: adjust correlation between any 2 variables removing what is explained by their correlation with other variables.&gt;
+
+&lt;br&gt;
+
+
+```
+##         BdyFt Age   Heght KneCr AnklC ExtnB Forrm WrstC
+## BodyFat  1.00                                          
+## Age      0.33  1.00                                    
+## Height  -0.26 -0.09  1.00                              
+## KneeCir  0.24 -0.10  0.28  1.00                        
+## AnkleCi -0.23 -0.21  0.26  0.20  1.00                  
+## ExtendB  0.19  0.26  0.02  0.45  0.16  1.00            
+## Forearm  0.18 -0.53 -0.17 -0.11 -0.18  0.63  1.00      
+## WristCi -0.15  0.51  0.18  0.18  0.35 -0.43  0.86  1.00
+```
 
 
 ---
 
 # Conclusions and recap
+
+- Correlation is a useful and informative tool to quantify the relation between pairs of variables.
+- Distinct situations may require distinct approaches
+- If certain assumptions hold, it is possible to compute a p-value for the CC
+    - Although it only informs if there is _any_ correlation
+    - To estimate _how big_ the correlation is, better use confidence intervals.
+- Correlation has many _false friends_
+    - Regression, AGreement, Causation, Spureous, ....
+    - Learn to know them and to know when to use them.
+- Correlation can be extended in many directions
+    - More coefficients
+    - More dimensions
+    
+---
+
+# QUESTIONS?
+
+&lt;img src="images/questions.png" width="90%" style="display: block; margin: auto;" /&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

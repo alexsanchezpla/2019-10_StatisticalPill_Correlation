@@ -56,11 +56,35 @@ knitr::include_graphics("images/uebvhir.png")
 - Everybody uses the term correlation, in science and normal life.
 
 
-```{r echo=FALSE, out.width="50%", fig.align='center'}
+```{r echo=FALSE, out.width="80%", fig.align='center'}
 knitr::include_graphics("images/correlationTitles.png")
 ```
 
-## But what is correlation?
+---
+
+# Motivation (_Why this pill_)
+
+.pull-left[
+
+- The concept, however is often misused or abused.
+    - Correlation used instead of agreement
+    - Regression used when there is no dependent/independent variables
+    - Significance applied when assumptions do not hold.
+]
+
+.pull-right[
+```{r echo=FALSE, out.width="90%", fig.align='center'}
+knitr::include_graphics("images/motivation2.png")
+```
+]
+
+.center[
+ __It may be worth to review a few concepts!__
+]
+
+---
+
+# But what is correlation?
 
 - In statistics, __dependence__ or __association__ is _any statistical relationship, whether causal or not, between two (random) variables_. 
 - In the broadest sense __correlation__ is _any statistical association_, though 
@@ -201,16 +225,16 @@ cor(rankAge, rankFat,
 
 ---
 
-# So what? Pearson or Spearmann?
+# So what? Pearson or Spearman?
 
 - Start with a plot
 - If the relation ship is _approximately_ linear you can use Pearson CC.
-- If the relation is not linear but it is _monotonically increasing- or _monotonically decreasing_ you better use Spearmann CC.
+- If the relation is not linear but it is _monotonically increasing- or _monotonically decreasing_ you better use Spearman CC.
 
 - The measurement scale is also a criteria 
 
     - Use Pearson if the data is in an "interval" or "quotient" scale
-    - Use Spearmann if the data are on an "ordinal" scale
+    - Use Spearman if the data are on an "ordinal" scale
 
 ---
 
@@ -222,22 +246,8 @@ knitr::include_graphics("images/summary-of-data-types-and-scales.png")
 
 ---
 
-# Kendall's TAU
 
-- Also suitable for data on an ordinal scale
-- Simple interpretation: It represents the degree of concordance between two columns of ranked data.
-    +  The more concordant ranks, the higher correlation.
-    + The more inversions (one rank increases, the other decreases) the lower correlation.
-
-.center[
-```{r, }
-cor(rankAge, rankFat, method = "kendall")
-```
-]
-
----
-
-# SIgnificance of correlation
+# Significance of correlation
 
 <br>
 
@@ -453,22 +463,95 @@ knitr::include_graphics("images/correlationNOTcausation1.png")
 ---
 # FF (4): Correlation is not agreement
 
----
+- Correlation and agreement are similar and related concepts but, _although similar and related, __they represent completely different notions of association__. 
 
-# FF (4): Spureous correlation
-
----
-
-# Going multivariate: Multiple correlation
+- Assessing agreement between variables assumes that the variables measure the same construct, 
+- while correlation of variables can be assessed for variables that measure completely different constructs. 
 
 ---
 
-# Going multivariate: Partial correlations
+# FF (4): Correlation is not agreement
+
+.pull-left[
+- _Aorta pulsatility_ is measured in week 0 and week 12 in the same body location in stable patients.
+
+- Both variables are measuring the same (AP) therefore the correlation does not make sense.
+
+- Instead we compute a _concordance coefficient_ (intraclass correlation) which accounts for the repeted measurement effect.
+]
+
+.pull-right[
+```{r echo=FALSE, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/agreement1.png")
+```
+]
+---
+
+# FF (4): Correlation is not agreement
+
+```{r echo=FALSE, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/agreement2.png")
+```
+
+---
+# FF (4): Correlation is not agreement 
+
+```{r echo=FALSE, out.width="90%", fig.align='center'}
+knitr::include_graphics("images/agreement3.png")
+```
+---
+
+# Going multivariate
+
+- What about correlation when we deal with several variables simultaneously?
+- Obvious step 1: Multiple correlations: every variable vs every other variable.
+
+<br>
+
+```{r echo=FALSE}
+library(psych)
+cor.glob<- cor (BMI_table3)
+lowerMat(cor.glob)
+```
+
+---
+# Partial correlations
+
+- A good idea: adjust correlation between any 2 variables removing what is explained by their correlation with other variables.>
+
+<br>
+
+```{r echo=FALSE}
+library(psych)
+par.r <- partial.r(BMI_table3)
+lowerMat(par.r)
+```
 
 
 ---
 
 # Conclusions and recap
+
+- Correlation is a useful and informative tool to quantify the relation between pairs of variables.
+- Distinct situations may require distinct approaches
+- If certain assumptions hold, it is possible to compute a p-value for the CC
+    - Although it only informs if there is _any_ correlation
+    - To estimate _how big_ the correlation is, better use confidence intervals.
+- Correlation has many _false friends_
+    - Regression, AGreement, Causation, Spureous, ....
+    - Learn to know them and to know when to use them.
+- Correlation can be extended in many directions
+    - More coefficients
+    - More dimensions
+    
+---
+
+# QUESTIONS?
+
+```{r echo=FALSE, out.width="90%", fig.align='center'}
+knitr::include_graphics("images/questions.png")
+```
+
 
 ```{r, warning = FALSE, comment = NA, message = FALSE, echo = FALSE, eval = FALSE}
 # HTML to PDF
