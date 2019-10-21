@@ -4,7 +4,8 @@
     <title>Correlation_and_Association.utf8</title>
     <meta charset="utf-8" />
     <meta name="author" content="Alex Sánchez" />
-    <meta name="date" content="2019-10-20" />
+    <meta name="date" content="2019-10-21" />
+    <script src="libs/kePrint/kePrint.js"></script>
     <link rel="stylesheet" href="mycss.css" type="text/css" />
   </head>
   <body>
@@ -14,7 +15,7 @@ class: center, middle, inverse, title-slide
 # <div class="line-block"> On correlation and association<br />
 PÍNDOLES ESTADÍSTIQUES UEB-VHIR</div>
 ### Alex Sánchez
-### 2019-10-20
+### 2019-10-21
 
 ---
 
@@ -24,9 +25,19 @@ PÍNDOLES ESTADÍSTIQUES UEB-VHIR</div>
 
 
 
+&lt;img src="images/pindolaTitleSlide.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Statistics and Bioinformatics Unit (UEB)
+
 &lt;img src="images/uebvhir.png" width="100%" style="display: block; margin: auto;" /&gt;
 
-
+.center[
+.font150[
+[http://ueb.vhir.org](http://ueb.vhir.org)
+]
+]
 ---
 
 # Outline of the talk
@@ -63,14 +74,13 @@ PÍNDOLES ESTADÍSTIQUES UEB-VHIR</div>
 
 ---
 
-# Example: Body fat and biometric measures
+# Example: Body fat and measures
 
 
 
-&lt;img src="Correlation_and_Association_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="Correlation_and_Association_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
-
 
 # Reviewing correlation coefficients (what's in my toolbox?)
 
@@ -85,7 +95,7 @@ PÍNDOLES ESTADÍSTIQUES UEB-VHIR</div>
 # Pearson correlation coefficient
 
 - Most commonly used correlation coefficient
-- Measures the degree of __linear__ relation between a pair of variables.
+- Measures the degree of __linear__ relation between a pair of _quantitative_ variables.
 - It takes values between +1 and −1, where 1 is total positive linear correlation, 0 is no linear correlation, and −1 is total negative linear correlation. 
 
 &lt;img src="images/PearsonCCValues.png" width="80%" style="display: block; margin: auto;" /&gt;
@@ -94,13 +104,16 @@ PÍNDOLES ESTADÍSTIQUES UEB-VHIR</div>
 
 # Pearson CC measures linear association
 
+- Pearson CC changes with noise
+- It is not affected by changes in slope
+- If relation is not linear it becomes useless
+
 &lt;img src="images/Correlation_examples2.WKP.png" width="90%" style="display: block; margin: auto;" /&gt;
+
 ---
 # Spearman correlation
 
-- Pearson CC is not useful if the relation is not linear
-- If, not being linear, it is _monotonically increasing_ or _montonically decreasing_, we may use Spearman Ranks Correlation. Coefficient.
-
+- If the relation is _monotone_ or the variables are in an _ordinal scale_ use _Spearman Ranks Correlation Coefficient_ instead of Pearson's.
 
 
 
@@ -128,11 +141,11 @@ PÍNDOLES ESTADÍSTIQUES UEB-VHIR</div>
 |18 |  60|    31.5|
 |19 |  61|    34.5|
 ]
+
 .pull-right[
 
-![](Correlation_and_Association_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
-
-Based on - Maze et al (1984) who studied the relation between age and percentage of Body fat
+![](Correlation_and_Association_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+Based on - Maze et al (1984).
 ]
 
 
@@ -140,16 +153,14 @@ Based on - Maze et al (1984) who studied the relation between age and percentage
 
 # Relation is monotonic, but not linear
 
-&lt;img src="Correlation_and_Association_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="Correlation_and_Association_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 # Spearman CC is based on __ranks__
 
-- Spearman CC = Pearson CC computed on ranks
-
 .pull-left[
-&lt;table&gt;
+&lt;table class="table table-striped" style="font-size: 11px; margin-left: auto; margin-right: auto;"&gt;
  &lt;thead&gt;
   &lt;tr&gt;
    &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
@@ -298,6 +309,9 @@ Based on - Maze et al (1984) who studied the relation between age and percentage
 ]
 .pull-right[
 
+__Spearman CC = Pearson CC computed on ranks__
+
+
 ```r
 cor(age,bodyFat, 
     method = "spearman")[2]
@@ -332,12 +346,290 @@ cor(rankAge, rankFat,
 
 ---
 
+# Review : Measurement scales
+
+&lt;img src="images/summary-of-data-types-and-scales.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
 # Kendall's TAU
 
 - Also suitable for data on an ordinal scale
 - Simple interpretation: It represents the degree of concordance between two columns of ranked data.
     +  The more concordant ranks, the higher correlation.
     + The more inversions (one rank increases, the other decreases) the lower correlation.
+
+.center[
+
+```r
+cor(rankAge, rankFat, method = "kendall")
+```
+
+```
+## [1] 0.6374269
+```
+]
+
+---
+
+# SIgnificance of correlation
+
+&lt;br&gt;
+
+&lt;br&gt;
+
+.pull-left[
+- Common correlation analysis report
+    - An estimate of correlation
+    - A least squares straight line
+    - A significance p-value
+    
+- Is everything appropriate?
+]
+
+.pull-right[
+&lt;img src="images/inferenceExample1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Can we make inferences on correlation?
+
+.pull-left[
+
+- Statistical inference deals with inferring properties in population characteristics from representative samples.
+
+&lt;img src="images/introduction-to-statistical-inference.jpg" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+
+When dealing with correlation it means answering questions such as:
+
+- What is the estimated correlation coefficient of the population?
+    - How precise is this estimate?
+- Is there any correlation in the population, or is the sample correlation just the luck of the draw?
+
+]
+
+---
+
+# Can we put a p-value on _r_?
+
+- It is possible to make some inferences on the population correlation coefficient, `\(\rho\)`.
+
+- It is not so straightforward as computing the sample correlation coefficient `\(r\)`.
+
+- For the p-value to be "valid" some assumptions must hold:
+    - WE have continuous variables in an interval or quotient scale, with no outliers.
+    - Data comes from a simple random sample
+    - From a bivariate normal distribution
+    
+- If these assumptions hold it is possible to tests the hypotheses:
+$$
+H_0:\, \rho=0,\mbox{ vs } \rho \neq 0.
+$$
+
+---
+
+# Example
+
+.pull-left[
+&lt;br&gt;
+&lt;br&gt;
+
+```
+##         BodyFat    Age Height KneeCir AnkleCi
+## BodyFat   1.000  0.084  0.148   0.060   0.488
+## Age       0.321  1.000  0.222   0.636   0.160
+## Height   -0.271 -0.230  1.000   0.008   0.000
+## KneeCir   0.347 -0.090  0.476   1.000   0.000
+## AnkleCi  -0.132 -0.263  0.648   0.621   1.000
+```
+- Correlation matrix (below) with 
+- significance values (above)
+]
+
+.pull-right[
+![](Correlation_and_Association_files/figure-html/unnamed-chunk-20-1.png)&lt;!-- --&gt;
+- Correlation depicted by circle size
+- Significance: Values above threshold left blank
+]
+
+---
+
+# What does this test tell?
+
+- Correlation significance test __tells nothing about how big the population correlation is__.
+- It only informs about if __it can be considered to be distinct than zero__.
+- Besides this it can only be considered valid if the assumptions hold.
+- And, if it were not enough, results are __very sensitive to sample size__
+    - Something not significant for small sample size.
+    - Becomes significant as sample size increases.
+- In summary: _Too much effort for a very small prize?_
+
+
+# Confidence intervals for `\(\rho\)`
+
+- A better alternative: __Compute confidence intervals for the correlation coefficient__.
+    - Again validity of assumptions is an additional difficulty
+    - However it is possible to obtain good approximations based on computational intensive approximations such as the __bootstrap__.
+
+
+---
+
+# Correlation coefficient CI example
+
+
+&lt;img src="images/Correlation-coefficient-with-respective-95-confidence-interval-of-size-assortment.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+- Correlation coefficient with respective 95% confidence interval of mean body surface affected by a chronic dermathological disease. 
+- Correlation coefficients are given for each year and are separated by work type. 
+- The black dotted line represents zero correlation. Significant correlations are marked with `\(*\)` P &lt; 0.05, `\(**\)` P &lt; 0.01 and `\(***\)` P &lt; 0.001. 
+
+---
+
+# False friends (1): Regression
+
+- Correlation and regression are often presented together.
+- They are related, but they are not the same:
+
+&lt;img src="images/correlationVSregression.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# One correlation vs two regressions
+
+&lt;img src="images/correlationVSregressions.jpg" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+# False friends (2): Class comparison
+
+- Is there correlation between disease and expression of a certain biomarker gene?
+    - OK to compute Pearson CC  between `Expression` and `Apoptosis` and say "There is"/"There isn't"
+    - Not OK to test differences between `HIGH` and `LOW` and say "There is"/"There isn't"
+    
+.pull-left[
+&lt;table class="table table-striped" style="font-size: 10px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Expression &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Apoptosis &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Disease_cat &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.20 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; LOW &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.40 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.33 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; LOW &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.70 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; HIGH &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.65 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.81 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; HIGH &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.90 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; HIGH &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.32 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; LOW &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.45 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.84 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; HIGH &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.77 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; HIGH &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.24 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; LOW &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.29 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; LOW &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 7 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.51 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+.pull-right[
+&lt;img src="Correlation_and_Association_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# FF (3): Correlation is not causation
+
+.pull-left[
+&lt;img src="images/correlationNOTcausation1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+- Correlation informs about the association between two variables
+- __It cannot tell anything__ about if changes in the values of one variable are due to changes in the values of the other variable.
+]
+
+---
+# FF (4): Correlation is not agreement
+
+---
+
+# FF (4): Spureous correlation
+
+---
+
+# Going multivariate: Multiple correlation
+
+---
+
+# Going multivariate: Partial correlations
+
+
+---
+
+# Conclusions and recap
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

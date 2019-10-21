@@ -12,6 +12,7 @@ output:
       highlightStyle: github
       highlightLines: true 
       countIncrementalSlides: false
+    titleSlideClass: [center, middle]
 params:
   name1: "Alex" 
   name2: "Alex"
@@ -28,10 +29,22 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 
 ```{r echo=FALSE, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/pindolaTitleSlide.png")
+```
+
+---
+
+# Statistics and Bioinformatics Unit (UEB)
+
+```{r echo=FALSE, out.width="100%", fig.align='center'}
 knitr::include_graphics("images/uebvhir.png")
 ```
 
-
+.center[
+.font150[
+[http://ueb.vhir.org](http://ueb.vhir.org)
+]
+]
 ---
 
 # Outline of the talk
@@ -72,7 +85,7 @@ knitr::include_graphics("images/Correlation_examples1.WKP.png")
 
 ---
 
-# Example: Body fat and biometric measures
+# Example: Body fat and measures
 
 ```{r, echo=FALSE, message=FALSE}
 library(XML)
@@ -91,7 +104,6 @@ ggpairs(BMI_table3)
 
 ---
 
-
 # Reviewing correlation coefficients (what's in my toolbox?)
 
 - Pearson (linear) correlation coefficient
@@ -105,7 +117,7 @@ ggpairs(BMI_table3)
 # Pearson correlation coefficient
 
 - Most commonly used correlation coefficient
-- Measures the degree of __linear__ relation between a pair of variables.
+- Measures the degree of __linear__ relation between a pair of _quantitative_ variables.
 - It takes values between +1 and −1, where 1 is total positive linear correlation, 0 is no linear correlation, and −1 is total negative linear correlation. 
 
 ```{r echo=FALSE, out.width="80%", fig.align='center'}
@@ -116,15 +128,18 @@ knitr::include_graphics("images/PearsonCCValues.png")
 
 # Pearson CC measures linear association
 
+- Pearson CC changes with noise
+- It is not affected by changes in slope
+- If relation is not linear it becomes useless
+
 ```{r echo=FALSE, out.width="90%", fig.align='center'}
 knitr::include_graphics("images/Correlation_examples2.WKP.png")
 ```
+
 ---
 # Spearman correlation
 
-- Pearson CC is not useful if the relation is not linear
-- If, not being linear, it is _monotonically increasing_ or _montonically decreasing_, we may use Spearman Ranks Correlation. Coefficient.
-
+- If the relation is _monotone_ or the variables are in an _ordinal scale_ use _Spearman Ranks Correlation Coefficient_ instead of Pearson's.
 
 ```{r, echo=FALSE}
 age<-c(23,33,27,28,29,39,41,45,30,50,53,36,54,56,57,58,59,60,61)
@@ -137,17 +152,23 @@ coeff=coefficients(reg)
 
 .pull-left[
 ```{r, echo=FALSE}
-knitr::kable(bodyFat, format="markdown")
+# require(DT)
+# head(bodyFat) %>% 
+#   datatable()
+require(magrittr)
+require(kableExtra)
+aTable<- kableExtra::kable(bodyFat, format="markdown")
+kable_styling(aTable, "striped", position = "center", font_size = 11)
 ```
 ]
+
 .pull-right[
 
 ```{r, echo=FALSE}
 sp<- ggplot(bodyFat, aes(x=age, y=percFat)) + geom_point()
 sp
 ```
-
-Based on - Maze et al (1984) who studied the relation between age and percentage of Body fat
+Based on - Maze et al (1984).
 ]
 
 
@@ -163,18 +184,20 @@ sp + geom_abline(intercept = coeff[1], slope=coeff[2]) + stat_smooth()
 
 # Spearman CC is based on __ranks__
 
-- Spearman CC = Pearson CC computed on ranks
-
 .pull-left[
 ```{r, echo=FALSE}
 rankAge= rank(age)
 rankFat=rank(percFat)
 bodyFatWithRanks <- data.frame(age, rankAge, percFat, rankFat )
 bodyFatWithRanks<- bodyFatWithRanks[order(bodyFatWithRanks$age),]
-kableExtra::kable(bodyFatWithRanks)
+aTable<- kableExtra::kable(bodyFatWithRanks)
+kable_styling(aTable, "striped", position = "center", font_size = 11)
 ```
 ]
 .pull-right[
+
+__Spearman CC = Pearson CC computed on ranks__
+
 ```{r}
 cor(age,bodyFat, 
     method = "spearman")[2]
@@ -198,6 +221,14 @@ cor(rankAge, rankFat,
 
 ---
 
+# Review : Measurement scales
+
+```{r echo=FALSE, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/summary-of-data-types-and-scales.png")
+```
+
+---
+
 # Kendall's TAU
 
 - Also suitable for data on an ordinal scale
@@ -205,7 +236,244 @@ cor(rankAge, rankFat,
     +  The more concordant ranks, the higher correlation.
     + The more inversions (one rank increases, the other decreases) the lower correlation.
 
+.center[
+```{r, }
+cor(rankAge, rankFat, method = "kendall")
+```
+]
+
+---
+
+# SIgnificance of correlation
+
+<br>
+
+<br>
+
+.pull-left[
+- Common correlation analysis report
+    - An estimate of correlation
+    - A least squares straight line
+    - A significance p-value
+    
+- Is everything appropriate?
+]
+
+.pull-right[
+```{r echo=FALSE, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/inferenceExample1.png")
+```
+]
+
+---
+
+# Can we make inferences on correlation?
+
+.pull-left[
+
+- Statistical inference deals with inferring properties in population characteristics from representative samples.
+
+```{r echo=FALSE, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/introduction-to-statistical-inference.jpg")
+```
+]
+
+.pull-right[
+
+When dealing with correlation it means answering questions such as:
+
+- What is the estimated correlation coefficient of the population?
+    - How precise is this estimate?
+- Is there any correlation in the population, or is the sample correlation just the luck of the draw?
+
+]
+
+---
+
+# Can we put a p-value on _r_?
+
+- It is possible to make some inferences on the population correlation coefficient, $\rho$.
+
+- It is not so straightforward as computing the sample correlation coefficient $r$.
+
+- For the p-value to be "valid" some assumptions must hold:
+    - WE have continuous variables in an interval or quotient scale, with no outliers.
+    - Data comes from a simple random sample
+    - From a bivariate normal distribution
+    
+- If these assumptions hold it is possible to tests the hypotheses:
+$$
+H_0:\, \rho=0,\mbox{ vs } \rho \neq 0.
+$$
+
+---
+
+# Example
+
+.pull-left[
+<br>
+<br>
+```{r, echo=FALSE}
+require(Hmisc)
+colnames(BMI_table3)<- substr(colnames(BMI_table3),1,7)
+res<- rcorr(as.matrix(BMI_table3[,1:5]))
+result<- res[[1]]
+for (i in 1:nrow(result))
+  for(j in i:ncol(result))
+    if (j > i) result[i,j]<- res[[3]][i,j]
+round(result,3)
+```
+- Correlation matrix (below) with 
+- significance values (above)
+]
+
+.pull-right[
+```{r, echo=FALSE}
+library(corrplot)
+corrplot(res$r, type="upper",  
+         p.mat = res$P, sig.level = 0.01, insig = "blank")
+```
+- Correlation depicted by circle size
+- Significance: Values above threshold left blank
+]
+
+---
+
+# What does this test tell?
+
+- Correlation significance test __tells nothing about how big the population correlation is__.
+- It only informs about if __it can be considered to be distinct than zero__.
+- Besides this it can only be considered valid if the assumptions hold.
+- And, if it were not enough, results are __very sensitive to sample size__
+    - Something not significant for small sample size.
+    - Becomes significant as sample size increases.
+- In summary: _Too much effort for a very small prize?_
 
 
+# Confidence intervals for $\rho$
 
+- A better alternative: __Compute confidence intervals for the correlation coefficient__.
+    - Again validity of assumptions is an additional difficulty
+    - However it is possible to obtain good approximations based on computational intensive approximations such as the __bootstrap__.
+
+```{r, echo=FALSE}
+# ++++++++++++++++++++++++++++
+# flattenCorrMatrix
+# ++++++++++++++++++++++++++++
+# cormat : matrix of the correlation coefficients
+# pmat : matrix of the correlation p-values
+flattenCorrMatrix <- function(cormat, pmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    row = rownames(cormat)[row(cormat)[ut]],
+    column = rownames(cormat)[col(cormat)[ut]],
+    cor  =(cormat)[ut],
+    p = pmat[ut]
+    )
+}
+```
+---
+
+# Correlation coefficient CI example
+
+
+```{r echo=FALSE, out.width="80%", fig.align='center'}
+knitr::include_graphics("images/Correlation-coefficient-with-respective-95-confidence-interval-of-size-assortment.png")
+```
+
+- Correlation coefficient with respective 95% confidence interval of mean body surface affected by a chronic dermathological disease. 
+- Correlation coefficients are given for each year and are separated by work type. 
+- The black dotted line represents zero correlation. Significant correlations are marked with $*$ P < 0.05, $**$ P < 0.01 and $***$ P < 0.001. 
+
+---
+
+# False friends (1): Regression
+
+- Correlation and regression are often presented together.
+- They are related, but they are not the same:
+
+```{r echo=FALSE, out.width="90%", fig.align='center'}
+knitr::include_graphics("images/correlationVSregression.png")
+```
+
+---
+
+# One correlation vs two regressions
+
+```{r echo=FALSE, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/correlationVSregressions.jpg")
+```
+
+```{r echo=FALSE, out.width="100%", fig.align='center'}
+osteo<-  read.delim("datasets/osteoporosis.txt")
+osteo50 <- as.data.frame(as.matrix(osteo[1:51,c(4,6,7,8,9)]))
+require(magrittr)
+osteo50 <- osteo50[osteo50$peso <100,]
+# sp<- ggplot(osteo50[,c(1,5)], aes(x=edad, y=imc)) + geom_point()
+# sp
+# reg1 <-lm(imc ~ edad, data = osteo50)
+# coeff=coefficients(reg1)
+# reg2 <-lm(edad ~ imc, data = osteo50)
+# coeff2=coefficients(reg2)
+# sp + geom_abline(intercept = coeff[1], slope=coeff[2]) + geom_abline(intercept = coeff2[1], slope=coeff2[2])
+```
+
+---
+
+# False friends (2): Class comparison
+
+- Is there correlation between disease and expression of a certain biomarker gene?
+    - OK to compute Pearson CC  between `Expression` and `Apoptosis` and say "There is"/"There isn't"
+    - Not OK to test differences between `HIGH` and `LOW` and say "There is"/"There isn't"
+    
+.pull-left[
+```{r, echo=FALSE}
+library(readxl)
+library(kableExtra)
+GExpressionVSApoptosis <- read_excel("datasets/GExpressionVSApoptosis.xls")
+aTable<- kableExtra::kable(GExpressionVSApoptosis)
+kable_styling(aTable, "striped", position = "center", font_size = 10)
+```
+]
+.pull-right[
+```{r echo=FALSE, fig.align='center'}
+expres <- as.data.frame(as.matrix(GExpressionVSApoptosis[,1:2]))
+sp<- ggplot(expres, aes(expres, x=Expression, y=Apoptosis))+ geom_point()
+sp
+```
+]
+
+---
+
+# FF (3): Correlation is not causation
+
+.pull-left[
+```{r echo=FALSE, out.width="100%", fig.align='center'}
+knitr::include_graphics("images/correlationNOTcausation1.png")
+```
+]
+.pull-right[
+- Correlation informs about the association between two variables
+- __It cannot tell anything__ about if changes in the values of one variable are due to changes in the values of the other variable.
+]
+
+---
+# FF (4): Correlation is not agreement
+
+---
+
+# FF (4): Spureous correlation
+
+---
+
+# Going multivariate: Multiple correlation
+
+---
+
+# Going multivariate: Partial correlations
+
+
+---
+
+# Conclusions and recap
 
