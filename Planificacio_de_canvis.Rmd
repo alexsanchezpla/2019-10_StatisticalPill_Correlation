@@ -1,0 +1,41 @@
+---
+title: "Planificacio de canvis"
+author: "Alex Sanchez"
+date: "21/10/2019"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Per afegir
+  - Referencies
+  - Diapo8: Referencia de les dades de la diapo 
+  - Despres de la diapo 11: Exemple de CC Pearson
+  - Poso o no poso la tau de kendall
+      + Quina és per variables caegòriques?
+  - Poso les fórmules?
+  - Puc posar un parell de simulacions sobre lo del p-valor
+    Ex: Pearson
+
+# Per canviar
+- Podria buscar un exemple millor que el BMI table i me'l deixo per a les correlacions parcials.
+    - Potser no cal que sigui molt multivariant
+- Puc canviar les amplades per defecte de .pull-left / .pull-right?
+- Areglar lo del "filter" que no anava posant dplyr::filter
+
+# Per arreglar
+
+```{r}
+AFIFI <- read_excel("datasets/AFIFI.XLS", 
+                    col_types = c("text", rep("numeric",2),
+                                  rep("text",3), rep("numeric", 20-6)))
+numAFIFI <- AFIFI [,-c(1,4,5,6,14:20)]
+
+require(GGally)
+ggpairs(numAFIFI)
+```
+

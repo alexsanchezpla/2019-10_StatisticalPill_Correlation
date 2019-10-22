@@ -24,6 +24,19 @@ editor_options:
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
+```{r packages, include=FALSE}
+# source("http://raw,githubusercontent.com/miriamMota/scripts/master/installifnot.R")
+if(!require(installifnot)) install_github("uebvhir/installifnot")
+installifnot("XML")
+installifnot("GGally")
+# installifnot("DT")
+installifnot("corrplot")
+installifnot("readxl")
+installifnot("kableExtra")
+installifnot("Hmisc")
+installifnot("psych")
+installifnot("webshot")
+```
 
 # Statistics and Bioinformatics Unit (UEB)
 
@@ -44,7 +57,7 @@ knitr::include_graphics("images/uebvhir.png")
 - Some basic ideas we have all heard about
 - What about significance (p-values)
 - Correlation false-friends
-    + _Regression, Relation, Agreement, Spurious, Ecological phallacy, Causation_
+    + _Regression, Relation, Agreement, Causation_ # Spurious, Ecological  phallacy,
 - Moving forward 
     + More dimensions, More methods ...
 - Wrap-up
@@ -69,7 +82,8 @@ knitr::include_graphics("images/correlationTitles.png")
 - The concept, however is often misused or abused.
     - Correlation used instead of agreement
     - Regression used when there is no dependent/independent variables
-    - Significance applied when assumptions do not hold.
+    - Significance applied when assumptions do not hold
+    - ...
 ]
 
 .pull-right[
@@ -98,36 +112,50 @@ knitr::include_graphics("images/motivation2.png")
 knitr::include_graphics("images/Correlation_examples1.WKP.png")
 ```
 
+
+---
+# Example:  Mortality & Latitude 
+
+```{r echo=FALSE, out.width="50%", fig.align='center'}
+library(readxl)
+mortality <- as.data.frame(read_excel("datasets/Daniels_C9.xls", sheet = "Tab91_Mortality_vs_States",
+                    col_types = c("text", rep("numeric", 4),"text")))
+qplot(Lat, Mortality, data=mortality, main="Mortality from cancer skin by State latitude (USA)")
+
+```
+- Mortality Rate [per 10 Million (107)] of White Males Due to Malignant Melanoma of the Skin for the Period 1950–1959 by State and Some Related Variables
+
+---
+# Example:  Exercise & $O_2$
+
+```{r echo=FALSE, out.width="50%", fig.align='center'}
+ExerciseData <- read_excel("datasets/Daniels_C9.xls", sheet = "T92_ExerciseData",
+                           col_types = c(rep("numeric", 7)))
+qplot(Duration, VO2, data=ExerciseData, main="Oxigen consumption and exercise (threadmill) time")
+```
+- Exercise Data for Healthy Active Males
 ---
 
-# Example: Body fat and measures
+# Example:  ATP consumption
 
-```{r, echo=FALSE, message=FALSE}
-library(XML)
-url <- "http://wiki.stat.ucla.edu/socr/index.php/SOCR_Data_BMI_Regression"
-BMI_parsed <- htmlParse(url)
-BMI_table <- readHTMLTable(BMI_parsed, which = 2) 
-for (i in 1:ncol(BMI_table)) BMI_table[,i] <- as.numeric(BMI_table[,i])
-BMI_table2 <- BMI_table[BMI_table$BodyFatSiriEqu < 100,]
-BMI_table3<- BMI_table2[1:30,c(2:4,11:15)]
+```{r echo=FALSE, out.width="50%", fig.align='center'}
+ATPbrothers <- read_excel("datasets/Daniels_C9.xls",  sheet = "T93_ATPConsumption",
+                           col_types = c(rep("numeric", 5)))
+qplot(ATPYoung, ATPOld, data=ATPbrothers, main="ATP consumption in younger and older brothers")
 ```
-
-```{r, echo=FALSE, fig.align='center'}
-require(GGally)
-ggpairs(BMI_table3)
-```
+- Erythrocyte Adenosine Triphosphate (ATP) Levelsa in Youngest and Oldest Sons in 17 Families Together with Age (Before Storage)
 
 ---
 
 # Reviewing correlation coefficients 
 
-## What's in my toolbox?
+<h2> What's in my toolbox?</h2>
 
 - Pearson (linear) correlation coefficient
 - Sperman (ranks) correlation coefficient
 - Kendall's tau
 - Intraclass correlation coefficients
-- Many other: Distance correlation, M
+- Many other: Distance correlation, Mutual Information, etc.
 
 ---
 
@@ -152,6 +180,21 @@ knitr::include_graphics("images/PearsonCCValues.png")
 ```{r echo=FALSE, out.width="90%", fig.align='center'}
 knitr::include_graphics("images/Correlation_examples2.WKP.png")
 ```
+---
+
+# Pearson CC examples
+
+```{r echo=FALSE, out.width="70%", fig.align='center'}
+CC1<-cor(mortality[,c("Mortality","Lat")], meth="pearson", use="complete.obs")[1,2]
+CC2<-cor(ExerciseData[,c("Duration","VO2")], meth="pearson", use="complete.obs")[1,2]
+CC3<-cor(ATPbrothers[,c("ATPYoung","ATPOld")], meth="pearson", use="complete.obs")[1,2]
+library(gridExtra)
+p1<-qplot(Duration, VO2, data=ExerciseData, main=paste0("Pearson CC=",round(CC1,3)))
+p2<-qplot(Lat, Mortality, data=mortality, main=paste0("Pearson CC=",round(CC2,3)))
+p3<-qplot(ATPYoung, ATPOld, data=ATPbrothers, main=paste0("Pearson CC=",round(CC3,3)))
+grid.arrange(p1,p2,p3, nrow=1)
+```
+
 
 ---
 # Spearman correlation
@@ -169,11 +212,11 @@ coeff=coefficients(reg)
 
 .pull-left[
 ```{r, echo=FALSE}
-# require(DT)
+# library(DT)
 # head(bodyFat) %>% 
 #   datatable()
-require(magrittr)
-require(kableExtra)
+library(magrittr)
+library(kableExtra)
 aTable<- kableExtra::kable(bodyFat, format="markdown")
 kable_styling(aTable, "striped", position = "center", font_size = 11)
 ```
@@ -308,16 +351,34 @@ When dealing with correlation it means answering questions such as:
 $$
 H_0:\, \rho=0,\mbox{ vs } \rho \neq 0.
 $$
+---
+
+# Example: Body fat and measures 
+
+```{r, echo=FALSE, message=FALSE}
+library(XML)
+url <- "http://wiki.stat.ucla.edu/socr/index.php/SOCR_Data_BMI_Regression"
+BMI_parsed <- htmlParse(url)
+BMI_table <- readHTMLTable(BMI_parsed, which = 2) 
+for (i in 1:ncol(BMI_table)) BMI_table[,i] <- as.numeric(BMI_table[,i])
+BMI_table2 <- BMI_table[BMI_table$BodyFatSiriEqu < 100,]
+BMI_table3<- BMI_table2[1:30,c(2:4,11:15)]
+```
+
+```{r echo=FALSE, out.width="80%", fig.align='center'}
+library(GGally)
+ggpairs(BMI_table3)
+```
 
 ---
 
-# Example
+# P-values for correlations
 
 .pull-left[
 <br>
 <br>
 ```{r, echo=FALSE}
-require(Hmisc)
+library(Hmisc)
 colnames(BMI_table3)<- substr(colnames(BMI_table3),1,7)
 res<- rcorr(as.matrix(BMI_table3[,1:5]))
 result<- res[[1]]
@@ -410,7 +471,7 @@ knitr::include_graphics("images/correlationVSregressions.jpg")
 ```{r echo=FALSE, out.width="100%", fig.align='center'}
 osteo<-  read.delim("datasets/osteoporosis.txt")
 osteo50 <- as.data.frame(as.matrix(osteo[1:51,c(4,6,7,8,9)]))
-require(magrittr)
+library(magrittr)
 osteo50 <- osteo50[osteo50$peso <100,]
 # sp<- ggplot(osteo50[,c(1,5)], aes(x=edad, y=imc)) + geom_point()
 # sp
