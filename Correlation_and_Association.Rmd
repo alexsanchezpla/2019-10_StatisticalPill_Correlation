@@ -25,8 +25,10 @@ options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 ```{r packages, include=FALSE}
-# source("http://raw,githubusercontent.com/miriamMota/scripts/master/installifnot.R")
+source("http://raw.githubusercontent.com/miriamMota/scripts/master/installifnot.R")
+require(devtools)
 if(!require(installifnot)) install_github("uebvhir/installifnot")
+
 installifnot("XML")
 installifnot("GGally")
 # installifnot("DT")
@@ -184,13 +186,13 @@ knitr::include_graphics("images/Correlation_examples2.WKP.png")
 
 # Pearson CC examples
 
-```{r echo=FALSE, out.width="70%", fig.align='center'}
+```{r echo=FALSE, out.heigth="70%", fig.align='center'}
 CC1<-cor(mortality[,c("Mortality","Lat")], meth="pearson", use="complete.obs")[1,2]
 CC2<-cor(ExerciseData[,c("Duration","VO2")], meth="pearson", use="complete.obs")[1,2]
 CC3<-cor(ATPbrothers[,c("ATPYoung","ATPOld")], meth="pearson", use="complete.obs")[1,2]
 library(gridExtra)
-p1<-qplot(Duration, VO2, data=ExerciseData, main=paste0("Pearson CC=",round(CC1,3)))
-p2<-qplot(Lat, Mortality, data=mortality, main=paste0("Pearson CC=",round(CC2,3)))
+p1<-qplot(Lat, Mortality, data=mortality, main=paste0("Pearson CC=",round(CC1,3)))
+p2<-qplot(Duration, VO2, data=ExerciseData, main=paste0("Pearson CC=",round(CC2,3)))
 p3<-qplot(ATPYoung, ATPOld, data=ATPbrothers, main=paste0("Pearson CC=",round(CC3,3)))
 grid.arrange(p1,p2,p3, nrow=1)
 ```
@@ -198,8 +200,6 @@ grid.arrange(p1,p2,p3, nrow=1)
 
 ---
 # Spearman correlation
-
-- If the relation is _monotone_ or the variables are in an _ordinal scale_ use _Spearman Ranks Correlation Coefficient_ instead of Pearson's.
 
 ```{r, echo=FALSE}
 age<-c(23,33,27,28,29,39,41,45,30,50,53,36,54,56,57,58,59,60,61)
@@ -210,6 +210,8 @@ reg<-lm(percFat ~ age, data = bodyFat)
 coeff=coefficients(reg)
 ```
 
+- If the relation is _monotone_ or the variables are in an _ordinal scale_ use _Spearman Ranks Correlation Coefficient_ instead of Pearson's.
+
 .pull-left[
 ```{r, echo=FALSE}
 # library(DT)
@@ -217,7 +219,7 @@ coeff=coefficients(reg)
 #   datatable()
 library(magrittr)
 library(kableExtra)
-aTable<- kableExtra::kable(bodyFat, format="markdown")
+aTable<- kableExtra::kable(bodyFat)
 kable_styling(aTable, "striped", position = "center", font_size = 11)
 ```
 ]
@@ -259,22 +261,31 @@ kable_styling(aTable, "striped", position = "center", font_size = 11)
 __Spearman CC = Pearson CC computed on ranks__
 
 ```{r}
-cor(age,bodyFat, 
-    method = "spearman")[2]
+cor(age,percFat, 
+    method = "spearman")
 cor(rankAge, rankFat,
     method = "pearson")
 ```
 ]
 
 ---
+# What about Kendall's tau
+
+- Kendall's tau is a correlation coefficient based on ranks
+- That is, it can be seen as _an alternative to Spearman CC_
+- Indeed the reason why/when we should choose Spearman or Kendall is not clearly documented
+.center[
+[https://stats.stackexchange.com/questions/3943/kendall-tau-or-spearmans-rho](https://stats.stackexchange.com/questions/3943/kendall-tau-or-spearmans-rho)
+]
+---
 
 # So what? Pearson or Spearman?
 
 - Start with a plot
 - If the relation ship is _approximately_ linear you can use Pearson CC.
-- If the relation is not linear but it is _monotonically increasing- or _monotonically decreasing_ you better use Spearman CC.
+- If the relation is not linear but it is _monotonically increasing_ or _monotonically decreasing_ you better use Spearman CC.
 
-- The measurement scale is also a criteria 
+- The _measurement scale_ is also a criteria 
 
     - Use Pearson if the data is in an "interval" or "quotient" scale
     - Use Spearman if the data are on an "ordinal" scale
@@ -343,7 +354,7 @@ When dealing with correlation it means answering questions such as:
 - It is not so straightforward as computing the sample correlation coefficient $r$.
 
 - For the p-value to be "valid" some assumptions must hold:
-    - WE have continuous variables in an interval or quotient scale, with no outliers.
+    - We have continuous variables in an interval or quotient scale, with no outliers.
     - Data comes from a simple random sample
     - From a bivariate normal distribution
     
@@ -362,13 +373,16 @@ BMI_parsed <- htmlParse(url)
 BMI_table <- readHTMLTable(BMI_parsed, which = 2) 
 for (i in 1:ncol(BMI_table)) BMI_table[,i] <- as.numeric(BMI_table[,i])
 BMI_table2 <- BMI_table[BMI_table$BodyFatSiriEqu < 100,]
-BMI_table3<- BMI_table2[1:30,c(2:4,11:15)]
+BMI_table3<- BMI_table2[1:30,c("BodyFatSiriEqu", "Age", "Height","KneeCircumf", "AnkleCircumf" )]
+colnames(BMI_table3)<- substr(colnames(BMI_table3),1,7)
 ```
 
-```{r echo=FALSE, out.width="80%", fig.align='center'}
+```{r echo=FALSE, out.width="60%", fig.align='center'}
 library(GGally)
 ggpairs(BMI_table3)
 ```
+<br>
+Source: [ "http://wiki.stat.ucla.edu/socr/index.php/SOCR_Data_BMI_Regression"]( "http://wiki.stat.ucla.edu/socr/index.php/SOCR_Data_BMI_Regression")
 
 ---
 
@@ -379,13 +393,15 @@ ggpairs(BMI_table3)
 <br>
 ```{r, echo=FALSE}
 library(Hmisc)
-colnames(BMI_table3)<- substr(colnames(BMI_table3),1,7)
+
 res<- rcorr(as.matrix(BMI_table3[,1:5]))
 result<- res[[1]]
 for (i in 1:nrow(result))
   for(j in i:ncol(result))
     if (j > i) result[i,j]<- res[[3]][i,j]
-round(result,3)
+
+aTable<- kableExtra::kable(round(result,3))
+kable_styling(aTable, "striped", position = "center", font_size = 12)
 ```
 - Correlation matrix (below) with 
 - significance values (above)
@@ -525,9 +541,13 @@ knitr::include_graphics("images/correlationNOTcausation1.png")
 # FF (4): Correlation is not agreement
 
 - Correlation and agreement are similar and related concepts but, _although similar and related, __they represent completely different notions of association__. 
+    - Agreement appears when we wish to compare two methods of measuring _the same_ thing.
+    - Correlation assumes that we are measuring variables that may be related, but  represent _different_ constructs.
+    
 
-- Assessing agreement between variables assumes that the variables measure the same construct, 
-- while correlation of variables can be assessed for variables that measure completely different constructs. 
+- Examples: 
+    - Lung function measured using a spirometer (expensive, accurate) or peak flowmeter (cheap, less accurate).
+    - Two devices (oropharyngeal and conventional) used to mesured acidity (pH) in the esophagus as a marker of reflux.
 
 ---
 
@@ -567,20 +587,14 @@ knitr::include_graphics("images/agreement3.png")
 - What about correlation when we deal with several variables simultaneously?
 - Obvious step 1: Multiple correlations: every variable vs every other variable.
 
-<br>
-
 ```{r echo=FALSE}
 library(psych)
 cor.glob<- cor (BMI_table3)
 lowerMat(cor.glob)
 ```
-
----
-# Partial correlations
+<br>
 
 - A good idea: adjust correlation between any 2 variables removing what is explained by their correlation with other variables.>
-
-<br>
 
 ```{r echo=FALSE}
 library(psych)
@@ -599,7 +613,7 @@ lowerMat(par.r)
     - Although it only informs if there is _any_ correlation
     - To estimate _how big_ the correlation is, better use confidence intervals.
 - Correlation has many _false friends_
-    - Regression, AGreement, Causation, Spureous, ....
+    - Regression, Agreement, Causation, Spureous, ....
     - Learn to know them and to know when to use them.
 - Correlation can be extended in many directions
     - More coefficients

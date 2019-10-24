@@ -30,12 +30,22 @@ knitr::opts_chunk$set(echo = TRUE)
 # Per arreglar
 
 ```{r}
+library(readxl)
 AFIFI <- read_excel("datasets/AFIFI.XLS", 
-                    col_types = c("text", rep("numeric",2),
-                                  rep("text",3), rep("numeric", 20-6)))
-numAFIFI <- AFIFI [,-c(1,4,5,6,14:20)]
+                    col_types = c("text", rep("numeric",2),rep("text",3), rep("numeric", 20-6)))
+numAFIFI <- AFIFI [,-c(1,4,5,6,12, 14:20)]
 
 require(GGally)
 ggpairs(numAFIFI)
 ```
+
+```{r}
+library(ggplot2)
+qplot(CTIME1,CARDIAC1, data=numAFIFI, geom=c("point", "smooth"))
+cor(numAFIFI[,c("CTIME1","CARDIAC1")], meth="pearson", use="complete.obs")
+cor(numAFIFI[,c("CTIME1","CARDIAC1")], meth="spearman", use="complete.obs")
+? ggpairs
+
+```
+
 
