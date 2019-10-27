@@ -13,7 +13,7 @@ output:
     titleSlideClass: [center, middle]
 params:
   name1: "Alex" 
-  name2: "Alex"
+?  name2: "Alex"
 editor_options: 
   chunk_output_type: console
 ---
@@ -620,15 +620,6 @@ lowerMat(par.r)
     - More dimensions
     
 ---
-
-# References
-- Aggarwal, R., & Ranganathan, P. (2016). Common pitfalls in statistical analysis: The use of correlation techniques. Perspectives in Clinical Research, 7(4), 187. https://doi.org/10.4103/2229-3485.192046
-- Asuero, A. G., Sayago, A., & González, A. G. (2006). The Correlation Coefficient: An Overview. Critical Reviews in Analytical Chemistry, 36(1), 41–59. https://doi.org/10.1080/10408340500526766
-- Bland, J. M., & Altman, D. G. (n.d.). STATISTICAL METHODS FOR ASSESSING AGREEMENT BETWEEN TWO METHODS OF CLINICAL MEASUREMENT.
-https://doi.org/10.1016/j.gaitpost.2017.06.014
-- Kamel, H. F. M., & Al-Amodi, H. S. A. B. (2017, August 1). Exploitation of Gene Expression and Cancer Biomarkers in Paving the Path to Era of Personalized Medicine. Genomics, Proteomics and Bioinformatics. Beijing Genomics Institute. https://doi.org/10.1016/j.gpb.2016.11.005
-- Kim, H. Y., Cha, Y. H., Chun, Y. S., & Shin, H. S. (2017). Correlation of the torsion values measured by rotational profile, kinematics, and CT study in CP patients. Gait & Posture, 57, 241–245. 
-- Xu, W., Hou, Y., Hung, Y. S., & Zou, Y. (2012). A comparative analysis of Spearman’s rho and Kendall’s tau in normal and contaminated normal models. Signal Processing, 93, 261–276. https://doi.org/10.1016/j.sigpro.2012.08.005
 
 # QUESTIONS?
 
