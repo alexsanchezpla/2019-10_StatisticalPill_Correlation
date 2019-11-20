@@ -1,6 +1,6 @@
 ---
-title: "."
-author: "."
+title: <font color="white">.</font>
+author: <font color="white">.</font>
 # date: "`r Sys.Date()`"
 output: 
   xaringan::moon_reader:
@@ -636,11 +636,8 @@ https://doi.org/10.1016/j.gaitpost.2017.06.014
 knitr::include_graphics("images/questions.png")
 ```
 
-
 ```{r, warning = FALSE, comment = NA, message = FALSE, echo = FALSE, eval = FALSE}
-# HTML to PDF
-library(webshot)
-file_name <- paste0("file://", normalizePath("Correlation_and_Association.html"))
-webshot(file_name, "Correlation_and_Association.pdf")
+# Rmd to PDF
+pagedown::chrome_print("Correlation_and_Association.Rmd")
 ```
 
